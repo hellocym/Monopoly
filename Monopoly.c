@@ -3,11 +3,24 @@
 #include<stdlib.h>
 #include<string.h>
 
-int RollDice(int sides)
+
+#define max(a,b) (a>b?a:b)
+
+int record1 = 1500;
+int record2 = 1500;
+
+
+
+int RollDice(int sides, int diceNum)
 {
-    int roll;
-    roll = rand() % sides + 1;
-    return roll;
+    int roll1 = 0;
+    int roll2 = 0;
+    roll1 = rand() % sides + 1;
+    roll2 = rand() % sides + 1;
+    if(diceNum == 2)
+        return roll1 + roll2;
+    else
+        return roll1;
 }
 
 int SelectMode(){
@@ -21,6 +34,20 @@ int SelectMode(){
         }
         printf("您选择了%d\n",mode);
         return mode;
+    }
+}
+
+int SelectDice(){
+    int num = 0;
+    while(1){
+        printf("选择骰子个数：\n1.单个骰子\n2.两个骰子\n");
+        scanf("%d",&num);
+        if(num != 1 && num != 2){
+            printf("输入错误，请重新输入\n");
+            continue;
+        }
+        printf("您选择了%d\n",num);
+        return num;
     }
 }
 
@@ -46,7 +73,7 @@ int SelectMapSize(){
 
 int chance(){
     // 抽取机会卡
-    switch(RollDice(6)){
+    switch(RollDice(6, 1)){
         case 1:
             printf("您看病花了 200 点\n");
             return -200;
@@ -130,17 +157,17 @@ int Event(int location, int mapSize, int money, int mode, int player){
             return -50;
         }
         else if(location == 4 || location == 38){
-            printf("%s现在在所得税格，需付 3%% 的点数 \n", playerName);
+            printf("%s现在在所得税格，需付 3%% 的点数\n", playerName);
         }
         else if(location == 10 || location == 20){
-            printf("%s现在在奢侈品税格，需付 10%% 的点数 \n", playerName);
+            printf("%s现在在奢侈品税格，需付 10%% 的点数\n", playerName);
             return -money*0.1;
         }
     }
     return 0;
 }
 
-int Game(int mapSize, int mode){
+int Game(int mapSize, int mode, int diceNum){
     int dice = 0;
     int loc1 = 0;
     int loc2 = 0;
@@ -170,7 +197,7 @@ int Game(int mapSize, int mode){
         printf("现在是%s的回合\n", player1);
         printf("按任意键掷骰子\n");
         getchar();
-        dice = RollDice(6);
+        dice = RollDice(6, diceNum);
         printf("%s掷出了 %d 点\n", player1, dice);
         loc1 += dice;
         if(loc1 >= mapSize){
@@ -190,7 +217,7 @@ int Game(int mapSize, int mode){
             printf("按任意键掷骰子\n");
             getchar();
         }
-        dice = RollDice(6);
+        dice = RollDice(6, diceNum);
         printf("%s掷出了 %d 点\n", player2, dice);
         loc2 += dice;
         if(loc2 >= mapSize){
@@ -205,9 +232,12 @@ int Game(int mapSize, int mode){
             return 1;
         }
 
+        record1 = max(record1, money1);
+        record2 = max(record2, money2);
+
         currentRound++;
     }
-    return (money1 > money2);
+    return money1 > money2;
     // true 表示玩家1赢
     // false 表示玩家2赢
 }
@@ -215,7 +245,8 @@ int Game(int mapSize, int mode){
 int main(){
     int mode = SelectMode();
     int mapSize = SelectMapSize();
-    int player1Wins = Game(mapSize, mode);
+    int diceNum = SelectDice();
+    int player1Wins = Game(mapSize, mode, diceNum);
     srand((unsigned)time(NULL));
     char player1[20] = "您";
     char player2[20] = "对手";
@@ -229,5 +260,7 @@ int main(){
     else{
         printf("%s赢了\n", player2);
     }
+    printf("%s的成就巅峰是 %d 点\n", player1, record1);
+    printf("%s的成就巅峰是 %d 点\n", player2, record2);
     return 0;
 }
