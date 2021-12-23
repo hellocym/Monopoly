@@ -3,13 +3,10 @@
 #include<stdlib.h>
 #include<string.h>
 
-
 #define max(a,b) (a>b?a:b)
 
 int record1 = 1500;
 int record2 = 1500;
-
-
 
 int RollDice(int sides, int diceNum)
 {
@@ -46,7 +43,12 @@ int SelectDice(){
             printf("输入错误，请重新输入\n");
             continue;
         }
-        printf("您选择了%d\n",num);
+        if(num == 1){
+            printf("您选择了单个骰子\n");
+        }
+        else{
+            printf("您选择了两个骰子\n");
+        }
         return num;
     }
 }
@@ -196,7 +198,7 @@ int Game(int mapSize, int mode, int diceNum){
         // 玩家1回合
         printf("现在是%s的回合\n", player1);
         printf("按任意键掷骰子\n");
-        getchar();
+        getch();
         dice = RollDice(6, diceNum);
         printf("%s掷出了 %d 点\n", player1, dice);
         loc1 += dice;
@@ -215,7 +217,7 @@ int Game(int mapSize, int mode, int diceNum){
         printf("现在是%s的回合\n", player2);
         if(mode == 2){
             printf("按任意键掷骰子\n");
-            getchar();
+            getch();
         }
         dice = RollDice(6, diceNum);
         printf("%s掷出了 %d 点\n", player2, dice);
@@ -263,4 +265,13 @@ int main(){
     printf("%s的成就巅峰是 %d 点\n", player1, record1);
     printf("%s的成就巅峰是 %d 点\n", player2, record2);
     return 0;
+}
+
+int RollDice2(int a){
+    int dice = 0;
+    int i = 0;
+    for(i = 0; i < a; i++){
+        dice += rand()%6 + 1;
+    }
+    return dice;
 }
